@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+
 const ModernPortfolio = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -18,6 +19,7 @@ const ModernPortfolio = () => {
   const horizontalTriggerRef = useRef(null);
   const horizontalSectionRef = useRef(null);
   const bgTextRef = useRef(null);
+  const experienceRef = useRef(null);
 
   const projects = [
     { title: "E-Commerce Luxe", category: "Web Design / Dev", img: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1000", year: "2024" },
@@ -25,6 +27,34 @@ const ModernPortfolio = () => {
     { title: "App Mobile Fitness", category: "React Native", img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1000", year: "2024" },
     { title: "Plateforme SaaS", category: "Fullstack", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000", year: "2023" },
   ];
+
+  const experiences = [
+  { 
+    company: "Tech Studio", 
+    role: "Développeur Senior", 
+    period: "2023 - Présent", 
+    desc: "Direction technique sur des projets React complexes et mentoring d'équipe." 
+  },
+  { 
+    company: "Digital Agency", 
+    role: "Fullstack Developer", 
+    period: "2021 - 2023", 
+    desc: "Développement d'architectures SaaS robustes avec Node.js et Next.js." 
+  },
+  { 
+    company: "Freelance", 
+    role: "Web Designer", 
+    period: "2019 - 2021", 
+    desc: "Création d'identités visuelles et de sites vitrines sur mesure pour clients internationaux." 
+  },
+  { 
+    company: "Creative Hub", 
+    role: "Junior Web Developer", 
+    period: "2018 - 2019", 
+    desc: "Intégration d'interfaces responsives et maintenance de solutions CMS." 
+  }, 
+  
+];
 
   useEffect(() => {
     let interval = setInterval(() => {
@@ -45,6 +75,7 @@ const ModernPortfolio = () => {
         onComplete: () => setLoading(false)
       });
     }
+    
 
     return () => clearInterval(interval);
   }, [progress]);
@@ -137,17 +168,59 @@ const ModernPortfolio = () => {
         }
       });
 
-      projects.forEach((_, i) => {
-        gsap.fromTo(`.content-${i}`, { y: 50, opacity: 0 }, { 
-          y: 0, opacity: 1, 
-          scrollTrigger: {
-            trigger: `.project-card-${i}`,
-            containerAnimation: pin,
-            start: "left 80%",
-            toggleActions: "play none none reverse"
-          }
-        });
-      });
+        // Animation de la ligne verticale (elle s'allonge au scroll)
+  gsap.fromTo(".experience-line", 
+    { scaleY: 0, transformOrigin: "top" },
+    { 
+      scaleY: 1, 
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#experience-section",
+        start: "top 40%",
+        end: "bottom 80%",
+        scrub: true
+      }
+    }
+  );
+  // --- ANIMATION EXPÉRIENCE ---
+  // 1. Animation de la ligne verticale qui descend au scroll
+  gsap.fromTo(".experience-line", 
+    { scaleY: 0, transformOrigin: "top" },
+    { 
+      scaleY: 1, 
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#experience-section",
+        start: "top 40%", // Commence quand la section arrive au milieu
+        end: "bottom 80%",
+        scrub: true // L'animation suit la vitesse du scroll
+      }
+    }
+  );
+
+  // 2. Animation d'entrée pour chaque carte et chaque point
+  const cards = gsap.utils.toArray(".exp-card");
+  cards.forEach((card) => {
+    const dot = card.querySelector(".dot-center");
+    const content = card.querySelector(".exp-content");
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: card,
+        start: "top 85%",
+        end: "top 50%",
+        toggleActions: "play none none reverse",
+      }
+    });
+
+    tl.from(dot, { scale: 0, duration: 0.4, ease: "back.out(2)" })
+      .from(content, { 
+        x: card.classList.contains('md:flex-row-reverse') ? 50 : -50, 
+        opacity: 0, 
+        duration: 0.8, 
+        ease: "power3.out" 
+      }, "-=0.2");
+  });
     }, containerRef);
     return () => ctx.revert();
   }, [loading]);
@@ -196,31 +269,58 @@ const ModernPortfolio = () => {
         </div>
       </nav>
 
-      {/* MENU FULLSCREEN */}
-      <div ref={menuRef} className="fixed inset-0 bg-[#f0f0f0] text-black z-[950] flex flex-col justify-center px-6 md:px-32" style={{ clipPath: "circle(0% at 90% 10%)" }}>
-        <nav className="flex flex-col gap-4">
-          {['Accueil', 'About', 'Projets', 'Contact'].map((item, i) => (
-            <a key={item} href={`#${item.toLowerCase()}`} 
-               onClick={(e) => scrollToSection(e, item === 'Accueil' ? 'hero-section' : (item === 'Projets' ? 'projects-trigger' : 'about-section'))}
-               className="text-5xl md:text-[7vw] font-black uppercase leading-none hover:italic transition-all group">
-              <span className="text-sm md:text-xl opacity-30 mr-4 group-hover:opacity-100 transition-opacity">0{i+1}</span>{item}
-            </a>
-          ))}
-        </nav>
+    {/* MENU FULLSCREEN */}
+{/* MENU FULLSCREEN MODIFIÉ */}
+<div 
+  ref={menuRef} 
+  className="fixed inset-0 z-[950] flex flex-col justify-center items-center backdrop-blur-xl bg-[#1a1a1a]/95 text-white" 
+  style={{ clipPath: "circle(0% at 90% 10%)" }}
+>
 
-        {/* BOUTON CV - AJOUTÉ ICI */}
-        <div className="mt-12">
-          <a 
-            href="/ton-cv.pdf" 
-            download="CV_Maminiela_Anthonio.pdf"
-            className="inline-flex items-center gap-4 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-800 transition-colors group"
-          >
-            <FileText size={20} className="group-hover:scale-110 transition-transform" />
-            TÉLÉCHARGER MON CV
-          </a>
-        </div>
-      </div>
+  <div className="w-full max-w-sm px-10 relative z-10">
+    <nav className="flex flex-col mb-10">
+      {['Accueil', 'About', 'Projets', 'Expérience', 'Contact'].map((item, i) => (
+        <a 
+          key={item} 
+          href={`#${item.toLowerCase()}`} 
+          className="menu-item group flex items-center justify-between py-4 border-b border-white/5 hover:border-blue-500/30 transition-all duration-500"
+          onClick={(e) => {
+            let targetId = item === 'Accueil' ? 'hero-section' : 
+                           item === 'About' ? 'about-section' : 
+                           item === 'Projets' ? 'projects-trigger' : 
+                           item === 'Expérience' ? 'experience-section' : 'footer-contact';
+            scrollToSection(e, targetId);
+          }}
+        >
+          <div className="flex items-center gap-4">
+           <span className="text-[9px] font-mono text-gray-400 opacity-40">0{i + 1}</span>
+            <span className="text-lg font-bold uppercase tracking-widest group-hover:italic group-hover:translate-x-3 transition-all duration-500">
+              {item}
+            </span>
+          </div>
+          <div className="w-1 h-1 rounded-full bg-blue-500 shadow-[0_0_12px_#3b82f6] scale-0 group-hover:scale-100 transition-transform" />
+        </a>
+      ))}
+    </nav>
 
+    {/* Bouton CV */}
+    <div className="menu-item flex justify-center">
+      <a 
+        href="/mon-cv.pdf" 
+        download 
+        className="flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.3em] py-3.5 px-8 border border-white/10 rounded-full hover:bg-white hover:text-[#0a1128] transition-all duration-500"
+      >
+        <FileText size={12} />
+        Télécharger CV
+      </a>
+    </div>
+  </div>
+
+  {/* Footer du menu */}
+  <div className="menu-item absolute bottom-10 opacity-20 text-[8px] font-bold tracking-[0.4em] uppercase">
+    Antananarivo / 2024
+  </div>
+</div>
       {/* HERO SECTION */}
       <section id="hero-section" className="relative min-h-screen flex flex-col items-center justify-center pt-20">
         <div className="hero-card relative w-full max-w-6xl aspect-[4/5] md:aspect-[21/9] px-4">
@@ -316,6 +416,41 @@ const ModernPortfolio = () => {
         </section>
       </div>
 
+    <section id="experience-section" className="min-h-screen py-32 px-6 md:px-24 bg-[#050505] relative">
+  <div className="max-w-6xl mx-auto">
+    <div className="mb-32">
+        <span className="block text-[10px] tracking-[0.5em] text-white/30 mb-8 font-bold uppercase">Parcours / 02</span>
+        <h2 className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-none italic">Expérience</h2>
+    </div>
+
+    <div className="relative">
+      {/* Ligne verticale qui s'anime au scroll */}
+      <div className="experience-line absolute left-0 md:left-1/2 top-0 w-[1px] h-full bg-gradient-to-b from-white via-white/20 to-transparent hidden md:block origin-top"></div>
+
+      <div className="grid gap-32 relative">
+        {experiences.map((exp, i) => (
+          <div key={i} className={`exp-card flex flex-col md:flex-row items-start gap-8 md:gap-0 ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
+            
+            {/* Contenu Texte */}
+            <div className={`exp-content w-full md:w-[45%] ${i % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
+              <div className="text-white/20 font-mono text-xs mb-2">{exp.period}</div>
+              <h4 className="text-3xl md:text-4xl font-black uppercase mb-4 tracking-tighter hover:italic transition-all">{exp.company}</h4>
+              <p className="text-sm font-bold text-white/40 uppercase tracking-[0.2em] mb-6">{exp.role}</p>
+              <p className="text-white/60 text-sm leading-relaxed max-w-md ml-auto mr-0 inline-block italic border-t border-white/5 pt-4">
+                {exp.desc}
+              </p>
+            </div>
+
+            {/* Le point central sur la ligne */}
+            <div className="dot-center absolute left-[-4px] md:left-1/2 md:translate-x-[-50%] w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)] z-10 hidden md:block mt-4"></div>
+
+            <div className="w-full md:w-[45%]"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
       <footer className="w-full py-16 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5">
         <div className="flex gap-8">
           {[Github, Linkedin, Mail].map((Icon, i) => (
