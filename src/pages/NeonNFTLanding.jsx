@@ -346,7 +346,7 @@ const ModernPortfolio = () => {
               className="w-full h-full object-cover grayscale opacity-40"
               style={{ pointerEvents: 'none' }}
             >
-             <source src="/video/video_fluide.mp4" type="video/mp4" />
+             <source src="/video/output.mp4" type="video/mp4" />
             </video>
           </div>
 
@@ -457,14 +457,16 @@ const ModernPortfolio = () => {
               <div className="md:text-center space-y-4">
                 <p className="text-[10px] text-white/20 uppercase tracking-[0.4em] font-bold">Contact</p>
                 <div className="flex flex-col gap-2">
-                  <a href="mailto:hello@rma.studio" className="text-xl font-bold hover:text-blue-500 transition-colors underline underline-offset-8 decoration-white/10 hover:decoration-blue-500">hello@rma.studio</a>
+                 <a href="tel:+261339735371" className="text-xl font-bold hover:text-blue-500 transition-colors underline underline-offset-8 decoration-white/10 hover:decoration-blue-500">
+                    033 97 353 71
+                </a>
                   <p className="text-sm text-white/40 italic">Disponible pour de nouvelles opportunités</p>
                 </div>
               </div>
               <div className="md:text-right space-y-4">
                 <p className="text-[10px] text-white/20 uppercase tracking-[0.4em] font-bold">Réseaux</p>
                 <div className="flex md:justify-end gap-4">
-                  {[{ Icon: Github, link: "#" }, { Icon: Linkedin, link: "#" }, { Icon: Mail, link: "#" }].map((item, i) => (
+                  {[{ Icon: Github, link: "https://github.com/" }, { Icon: Linkedin, link: "#" }, { Icon: Mail, link: "https://mail.google.com/mail/u/0/" }].map((item, i) => (
                     <a key={i} href={item.link} className="w-12 h-12 flex items-center justify-center rounded-xl border border-white/5 bg-white/5 text-white/50 hover:text-white hover:border-blue-500/50 hover:bg-blue-500/10 transition-all duration-300">
                       <item.Icon size={18} />
                     </a>
